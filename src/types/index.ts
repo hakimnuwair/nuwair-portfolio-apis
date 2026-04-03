@@ -56,6 +56,7 @@ export interface SkillDocument extends Document {
   level: SkillLevel;
   iconUrl?: string;
   order: number;
+  categoryOrder: number;
   isVisible: boolean;
 }
 

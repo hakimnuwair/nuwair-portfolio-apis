@@ -1,12 +1,12 @@
 // src/middlewares/index.ts — All Express middlewares
 
 import { Request, Response, NextFunction } from "express";
-import { ZodSchema, ZodError } from "zod";
+import { ZodSchema } from "zod";
 import jwt from "jsonwebtoken";
 import rateLimit from "express-rate-limit";
-import { config } from "../config/env";
-import { AuthRequest, JwtPayload } from "../types";
-import { sendError } from "../utils/response";
+import { config } from "../config/env.js";
+import { AuthRequest, JwtPayload } from "../types/index.js";
+import { sendError } from "../utils/response.js";
 
 // ─── Auth middleware ──────────────────────────────────────────────────────────
 
@@ -38,14 +38,15 @@ export const validate =
     const result = schema.safeParse(req.body);
     if (!result.success) {
       const errors: Record<string, string> = {};
-      (result.error as ZodError).errors.forEach((e) => {
-        const key = e.path.join(".");
-        errors[key] = e.message;
+      // Zod exposes validation problems as .issues (not .errors)
+      result.error.issues.forEach((issue) => {
+        const key = issue.path.join(".");
+        errors[key] = issue.message;
       });
       sendError(res, "Validation failed", 422, errors);
       return;
     }
-    req.body = result.data; // parsed + coerced values
+    req.body = result.data;
     next();
   };
 
@@ -70,7 +71,7 @@ export const notFound = (_req: Request, res: Response): void => {
 // ─── Rate limiters ────────────────────────────────────────────────────────────
 
 export const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 100,
   message: { success: false, message: "Too many requests, try again later" },
   standardHeaders: true,
@@ -78,9 +79,12 @@ export const generalLimiter = rateLimit({
 });
 
 export const contactLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
+  windowMs: 60 * 60 * 1000,
   max: 5,
-  message: { success: false, message: "Too many contact submissions, try again later" },
+  message: {
+    success: false,
+    message: "Too many contact submissions, try again later",
+  },
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -88,7 +92,10 @@ export const contactLimiter = rateLimit({
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: { success: false, message: "Too many auth attempts, try again later" },
+  message: {
+    success: false,
+    message: "Too many auth attempts, try again later",
+  },
   standardHeaders: true,
   legacyHeaders: false,
 });

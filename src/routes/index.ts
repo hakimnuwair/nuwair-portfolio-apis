@@ -1,7 +1,12 @@
 // src/routes/index.ts — All API routes
 
 import { Router } from "express";
-import { protect, validate, authLimiter, contactLimiter } from "../middlewares";
+import {
+  protect,
+  validate,
+  authLimiter,
+  contactLimiter,
+} from "../middlewares/index.js";
 import {
   authController,
   profileController,
@@ -9,7 +14,7 @@ import {
   projectController,
   experienceController,
   contactController,
-} from "../controllers";
+} from "../controllers/index.js";
 import {
   loginSchema,
   profileUpdateSchema,
@@ -21,7 +26,7 @@ import {
   experienceUpdateSchema,
   contactSchema,
   contactStatusSchema,
-} from "../validators";
+} from "../validators/index.js";
 
 const router = Router();
 

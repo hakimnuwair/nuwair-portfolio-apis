@@ -1,7 +1,7 @@
 // src/controllers/index.ts — All route controllers
 
 import { Request, Response, NextFunction } from "express";
-import { AuthRequest } from "../types";
+import { AuthRequest } from "../types/index.js";
 import {
   authService,
   profileService,
@@ -9,8 +9,8 @@ import {
   projectService,
   experienceService,
   contactService,
-} from "../services";
-import { sendSuccess, sendError } from "../utils/response";
+} from "../services/index.js";
+import { sendSuccess, sendError } from "../utils/response.js";
 
 // ─── Auth controller ──────────────────────────────────────────────────────────
 
@@ -112,14 +112,16 @@ export const skillController = {
       next(err);
     }
   },
-
   update: async (
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const skill = await skillService.update(req.params.id, req.body);
+      const skill = await skillService.update(
+        req.params.id as string,
+        req.body,
+      );
       if (!skill) {
         sendError(res, "Skill not found", 404);
         return;
@@ -136,7 +138,7 @@ export const skillController = {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const deleted = await skillService.delete(req.params.id);
+      const deleted = await skillService.delete(req.params.id as string);
       if (!deleted) {
         sendError(res, "Skill not found", 404);
         return;
@@ -183,7 +185,7 @@ export const projectController = {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const project = await projectService.getById(req.params.id);
+      const project = await projectService.getById(req.params.id as string);
       if (!project) {
         sendError(res, "Project not found", 404);
         return;
@@ -213,7 +215,10 @@ export const projectController = {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const project = await projectService.update(req.params.id, req.body);
+      const project = await projectService.update(
+        req.params.id as string,
+        req.body,
+      );
       if (!project) {
         sendError(res, "Project not found", 404);
         return;
@@ -230,7 +235,7 @@ export const projectController = {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const deleted = await projectService.delete(req.params.id);
+      const deleted = await projectService.delete(req.params.id as string);
       if (!deleted) {
         sendError(res, "Project not found", 404);
         return;
@@ -290,7 +295,10 @@ export const experienceController = {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const exp = await experienceService.update(req.params.id, req.body);
+      const exp = await experienceService.update(
+        req.params.id as string,
+        req.body,
+      );
       if (!exp) {
         sendError(res, "Experience not found", 404);
         return;
@@ -307,7 +315,7 @@ export const experienceController = {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const deleted = await experienceService.delete(req.params.id);
+      const deleted = await experienceService.delete(req.params.id as string);
       if (!deleted) {
         sendError(res, "Experience not found", 404);
         return;
@@ -355,7 +363,7 @@ export const contactController = {
   ): Promise<void> => {
     try {
       const contact = await contactService.updateStatus(
-        req.params.id,
+        req.params.id as string,
         req.body.status,
       );
       if (!contact) {
@@ -374,7 +382,7 @@ export const contactController = {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const deleted = await contactService.delete(req.params.id);
+      const deleted = await contactService.delete(req.params.id as string);
       if (!deleted) {
         sendError(res, "Message not found", 404);
         return;

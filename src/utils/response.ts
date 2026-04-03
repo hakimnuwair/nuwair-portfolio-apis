@@ -1,7 +1,7 @@
 // src/utils/response.ts — Clean response helpers
 
 import { Response } from "express";
-import { ApiSuccess, ApiError } from "../types";
+import { ApiSuccess, ApiError } from "../types/index.js";
 
 export const sendSuccess = <T>(
   res: Response,
@@ -17,4 +17,6 @@ export const sendError = (
   status = 400,
   errors?: Record<string, string>,
 ): Response<ApiError> =>
-  res.status(status).json({ success: false, message, ...(errors && { errors }) });
+  res
+    .status(status)
+    .json({ success: false, message, ...(errors && { errors }) });
