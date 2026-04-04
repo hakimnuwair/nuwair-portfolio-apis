@@ -11,6 +11,8 @@ import routes from "./routes/index.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 // ─── Security & parsing middleware ────────────────────────────────────────────
 app.use(helmet());
 // app.use(cors({ origin: config.corsOrigin, credentials: true }));
