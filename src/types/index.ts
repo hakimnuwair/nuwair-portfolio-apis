@@ -62,6 +62,34 @@ export interface SkillDocument extends Document {
 
 // ─── Project ─────────────────────────────────────────────────────────────────
 
+export interface KeyDecision {
+  title: string;
+  detail: string;
+  relatedNodeId?: string;
+}
+
+export interface ImpactMetric {
+  label: string;
+  value: string;
+}
+
+export interface DiagramNode {
+  id: string;
+  label: string;
+  kind?: string;
+}
+
+export interface DiagramEdge {
+  from: string;
+  to: string;
+  label?: string;
+}
+
+export interface ArchitectureSection {
+  title: string;
+  points: string[];
+}
+
 export interface ProjectDocument extends Document {
   _id: Types.ObjectId;
   title: string;
@@ -75,6 +103,13 @@ export interface ProjectDocument extends Document {
   order: number;
   isVisible: boolean;
   createdAt: Date;
+  highlights?: string[];
+  architectureNotes?: string;
+  architectureSections?: ArchitectureSection[];
+  keyDecisions?: KeyDecision[];
+  impactMetrics?: ImpactMetric[];
+  diagramNodes?: DiagramNode[];
+  diagramEdges?: DiagramEdge[];
 }
 
 // ─── Experience ───────────────────────────────────────────────────────────────
@@ -89,6 +124,11 @@ export interface ExperienceDocument extends Document {
   isCurrent: boolean;
   order: number;
   isVisible: boolean;
+  purpose?: string;
+  keyContributions?: string[];
+  impactOutcomes?: ImpactMetric[];
+  technicalResponsibilities?: string[];
+  engineeringHighlights?: string[];
 }
 
 // ─── Contact ─────────────────────────────────────────────────────────────────

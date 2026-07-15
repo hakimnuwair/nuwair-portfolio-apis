@@ -59,6 +59,49 @@ skillSchema.index({ categoryOrder: 1, order: 1 });
 
 // ─── Project ─────────────────────────────────────────────────────────────────
 
+const keyDecisionSchema = new Schema(
+  {
+    title: { type: String, required: true },
+    detail: { type: String, default: "" },
+    relatedNodeId: { type: String, default: "" },
+  },
+  { _id: false },
+);
+
+const impactMetricSchema = new Schema(
+  {
+    label: { type: String, required: true },
+    value: { type: String, required: true },
+  },
+  { _id: false },
+);
+
+const diagramNodeSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    label: { type: String, required: true },
+    kind: { type: String, default: "" },
+  },
+  { _id: false },
+);
+
+const diagramEdgeSchema = new Schema(
+  {
+    from: { type: String, required: true },
+    to: { type: String, required: true },
+    label: { type: String, default: "" },
+  },
+  { _id: false },
+);
+
+const architectureSectionSchema = new Schema(
+  {
+    title: { type: String, required: true },
+    points: { type: [String], default: [] },
+  },
+  { _id: false },
+);
+
 const projectSchema = new Schema<ProjectDocument>(
   {
     title: { type: String, required: true },
@@ -71,6 +114,17 @@ const projectSchema = new Schema<ProjectDocument>(
     isFeatured: { type: Boolean, default: false },
     order: { type: Number, default: 0 },
     isVisible: { type: Boolean, default: true },
+    // Case-study content — all optional/additive, populated per project via admin.
+    // Rendering order on /work/:id follows a product-first, engineering-second
+    // structure: highlights (scannable, non-technical) before architecture
+    // (technical depth) before decisions (trade-offs).
+    highlights: { type: [String], default: [] },
+    architectureNotes: { type: String, default: "" },
+    architectureSections: { type: [architectureSectionSchema], default: [] },
+    keyDecisions: { type: [keyDecisionSchema], default: [] },
+    impactMetrics: { type: [impactMetricSchema], default: [] },
+    diagramNodes: { type: [diagramNodeSchema], default: [] },
+    diagramEdges: { type: [diagramEdgeSchema], default: [] },
   },
   { timestamps: true },
 );
@@ -89,6 +143,14 @@ const experienceSchema = new Schema<ExperienceDocument>(
     isCurrent: { type: Boolean, default: false },
     order: { type: Number, default: 0 },
     isVisible: { type: Boolean, default: true },
+    // Structured content — same product-first, progressive-disclosure policy as
+    // Project case studies. All optional/additive; falls back to `description`
+    // when absent.
+    purpose: { type: String, default: "" },
+    keyContributions: { type: [String], default: [] },
+    impactOutcomes: { type: [impactMetricSchema], default: [] },
+    technicalResponsibilities: { type: [String], default: [] },
+    engineeringHighlights: { type: [String], default: [] },
   },
   { timestamps: true },
 );
