@@ -1,52 +1,12 @@
-// src/index.ts — Application entry point
+// src/index.ts — Local server entry point.
+// Only used for `npm run dev` / `npm start` on your own machine. Vercel
+// deploys use api/index.ts instead, which imports the same app from
+// ./app.ts but never calls .listen() — see that file for why.
 
-import express from "express";
-import cors from "cors";
-import helmet from "helmet";
-import morgan from "morgan";
 import { config } from "./config/env.js";
 import { connectDB } from "./config/database.js";
-import { generalLimiter, errorHandler, notFound } from "./middlewares/index.js";
-import routes from "./routes/index.js";
+import app from "./app.js";
 
-const app = express();
-
-app.set("trust proxy", 1);
-
-// ─── Security & parsing middleware ────────────────────────────────────────────
-app.use(helmet());
-// app.use(cors({ origin: config.corsOrigin, credentials: true }));
-app.use(cors({ origin: true, credentials: true }));
-app.use(express.json({ limit: "10kb" }));
-app.use(express.urlencoded({ extended: true }));
-
-console.log("corsorgin: ", config.corsOrigin);
-
-// ─── Logging (dev only) ───────────────────────────────────────────────────────
-if (config.nodeEnv === "development") {
-  app.use(morgan("dev"));
-}
-
-// ─── Rate limiting ────────────────────────────────────────────────────────────
-app.use("/api", generalLimiter);
-
-// ─── Routes ───────────────────────────────────────────────────────────────────
-app.use("/api/v1", routes);
-
-// ─── Health check ─────────────────────────────────────────────────────────────
-app.get("/health", (_req, res) => {
-  res.json({
-    success: true,
-    message: "Portfolio API is running",
-    env: config.nodeEnv,
-  });
-});
-
-// ─── Error handling ───────────────────────────────────────────────────────────
-app.use(notFound);
-app.use(errorHandler);
-
-// ─── Start ────────────────────────────────────────────────────────────────────
 const start = async (): Promise<void> => {
   await connectDB();
   app.listen(config.port, () => {
